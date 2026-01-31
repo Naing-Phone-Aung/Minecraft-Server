@@ -6,9 +6,6 @@ build/
 Thumbs.db
 *.zip
 
-# Build output
-src/styles.css
-
 # User data
 bedrock-server/
 server-config.json
