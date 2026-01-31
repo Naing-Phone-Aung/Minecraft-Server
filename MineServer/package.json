@@ -1,0 +1,30 @@
+{
+  "name": "mineserver",
+  "version": "1.0.0",
+  "description": "Minecraft Bedrock Server Manager with GUI",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build-css": "npx tailwindcss -i ./src/input.css -o ./src/styles.css --minify"
+  },
+  "keywords": [
+    "minecraft",
+    "bedrock",
+    "server",
+    "manager"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^28.0.0",
+    "axios": "^1.6.2",
+    "extract-zip": "^2.0.1",
+    "public-ip": "^6.0.1"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32"
+  }
+}

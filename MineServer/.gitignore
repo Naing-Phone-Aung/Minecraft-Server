@@ -1,0 +1,19 @@
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
+Thumbs.db
+*.zip
+
+# Build output
+src/styles.css
+
+# User data
+bedrock-server/
+server-config.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

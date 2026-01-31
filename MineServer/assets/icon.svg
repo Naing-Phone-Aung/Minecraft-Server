@@ -1,0 +1,27 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="256" height="256" rx="32" fill="url(#gradient)"/>
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="256" y2="256" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#16a34a"/>
+    </linearGradient>
+  </defs>
+  <!-- Minecraft block pattern -->
+  <rect x="32" y="32" width="48" height="48" fill="#86efac"/>
+  <rect x="96" y="32" width="48" height="48" fill="#4ade80"/>
+  <rect x="160" y="32" width="48" height="48" fill="#86efac"/>
+  
+  <rect x="32" y="96" width="48" height="48" fill="#4ade80"/>
+  <rect x="96" y="96" width="48" height="48" fill="#22c55e"/>
+  <rect x="160" y="96" width="48" height="48" fill="#4ade80"/>
+  
+  <rect x="32" y="160" width="48" height="48" fill="#86efac"/>
+  <rect x="96" y="160" width="48" height="48" fill="#4ade80"/>
+  <rect x="160" y="160" width="48" height="48" fill="#86efac"/>
+  
+  <!-- Server symbol -->
+  <circle cx="176" cy="192" r="48" fill="#1f2937"/>
+  <circle cx="176" cy="192" r="40" fill="#374151"/>
+  <circle cx="176" cy="192" r="16" fill="#22c55e"/>
+  <circle cx="176" cy="192" r="8" fill="#4ade80"/>
+</svg>

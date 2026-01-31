@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minecraft Bedrock Server Manager</title>
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+<body class="antialiased">
+  <div class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-gray-800 border-b border-gray-700 shadow-lg">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-700 rounded-lg flex items-center justify-center shadow-lg">
+              <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M4 4h4v4H4V4zm6 0h4v4h-4V4zm6 0h4v4h-4V4zM4 10h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4zM4 16h4v4H4v-4zm6 0h4v4h-4v-4zm6 0h4v4h-4v-4z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 class="text-2xl font-bold gradient-text">Bedrock Server Manager</h1>
+              <p class="text-sm text-gray-400">Manage your Minecraft Bedrock dedicated server</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div id="networkStatus" class="hidden">
+              <!-- Network status will be inserted here -->
+            </div>
+            <div id="serverStatusBadge">
+              <span class="badge badge-danger">
+                <span class="w-2 h-2 bg-red-400 rounded-full mr-2 animate-pulse"></span>
+                Offline
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 container mx-auto px-6 py-8">
+      <!-- Setup Screen -->
+      <div id="setupScreen" class="hidden">
+        <div class="max-w-2xl mx-auto">
+          <div class="card text-center">
+            <div class="mb-6">
+              <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-green-700 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+                </svg>
+              </div>
+              <h2 class="text-3xl font-bold mb-2">Welcome to Bedrock Server Manager</h2>
+              <p class="text-gray-400">Download and setup your Minecraft Bedrock Dedicated Server</p>
+            </div>
+            
+            <div id="downloadProgress" class="hidden mb-6">
+              <div class="w-full bg-gray-700 rounded-full h-3 mb-2 overflow-hidden">
+                <div id="progressBar" class="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+              </div>
+              <p id="downloadStatus" class="text-sm text-gray-400">Preparing download...</p>
+            </div>
+            
+            <button id="downloadBtn" class="btn btn-primary text-lg px-8 py-3">
+              <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+              </svg>
+              Download Server (v1.21.132.3)
+            </button>
+            
+            <div class="mt-6 p-4 bg-blue-900/30 border border-blue-700 rounded-lg">
+              <p class="text-sm text-blue-300">
+                <svg class="w-5 h-5 inline-block mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                This will download approximately 60MB from Minecraft's official servers
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main App Screen -->
+      <div id="mainScreen" class="hidden">
+        <!-- Tabs -->
+        <div class="border-b border-gray-700 mb-6">
+          <nav class="flex space-x-1">
+            <button class="tab tab-active" data-tab="dashboard">
+              <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+              Dashboard
+            </button>
+            <button class="tab" data-tab="settings">
+              <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+              Settings
+            </button>
+            <button class="tab" data-tab="console">
+              <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              Console
+            </button>
+          </nav>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboardTab" class="tab-content">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Server Control Card -->
+            <div class="card lg:col-span-2">
+              <h2 class="text-xl font-bold mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                </svg>
+                Server Control
+              </h2>
+              
+              <div class="space-y-4">
+                <div class="flex items-center justify-between p-4 bg-gray-700/50 rounded-lg">
+                  <div>
+                    <p class="text-sm text-gray-400">Server Status</p>
+                    <p id="statusText" class="text-lg font-semibold">Stopped</p>
+                  </div>
+                  <div id="statusIndicator" class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                  <button id="startServerBtn" class="btn btn-primary">
+                    <svg class="w-5 h-5 inline-block mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
+                    </svg>
+                    Start Server
+                  </button>
+                  <button id="stopServerBtn" class="btn btn-danger" disabled>
+                    <svg class="w-5 h-5 inline-block mr-2" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"/>
+                    </svg>
+                    Stop Server
+                  </button>
+                </div>
+                
+                <button id="restartServerBtn" class="btn btn-outline w-full" disabled>
+                  <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                  </svg>
+                  Restart Server
+                </button>
+                
+                <button id="openFolderBtn" class="btn btn-secondary w-full">
+                  <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                  </svg>
+                  Open Server Folder
+                </button>
+              </div>
+            </div>
+
+            <!-- Server Info Card -->
+            <div class="card">
+              <h2 class="text-xl font-bold mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Connection Info
+              </h2>
+              
+              <div class="space-y-4">
+                <div>
+                  <p class="text-sm text-gray-400 mb-2">Local IP Address</p>
+                  <div id="ipAddressList" class="space-y-2">
+                    <div class="flex items-center justify-between p-2 bg-gray-700/50 rounded">
+                      <span class="text-sm font-mono">Loading...</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <p class="text-sm text-gray-400 mb-2">Server Port</p>
+                  <div class="flex items-center justify-between p-2 bg-gray-700/50 rounded">
+                    <span id="serverPort" class="text-sm font-mono">19132</span>
+                    <span class="badge badge-info">UDP</span>
+                  </div>
+                </div>
+                
+                <div id="networkWarning" class="hidden p-3 bg-yellow-900/30 border border-yellow-700 rounded-lg">
+                  <div class="flex">
+                    <svg class="w-5 h-5 text-yellow-400 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    <div>
+                      <p class="text-sm font-semibold text-yellow-400">Mobile Hotspot Detected</p>
+                      <p class="text-xs text-yellow-300 mt-1">Server will only work on local network. Public access is not available when using mobile hotspot.</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="p-3 bg-blue-900/30 border border-blue-700 rounded-lg">
+                  <p class="text-xs text-blue-300">
+                    <svg class="w-4 h-4 inline-block mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    Players on the same network can connect using your local IP and port
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+              <svg class="w-6 h-6 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              Quick Actions
+            </h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <button class="quick-action-btn p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-all" data-command="list">
+                <svg class="w-8 h-8 mx-auto mb-2 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                <p class="text-sm font-medium">List Players</p>
+              </button>
+              
+              <button class="quick-action-btn p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-all" data-command="save hold">
+                <svg class="w-8 h-8 mx-auto mb-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                </svg>
+                <p class="text-sm font-medium">Save World</p>
+              </button>
+              
+              <button class="quick-action-btn p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-all" data-command="whitelist list">
+                <svg class="w-8 h-8 mx-auto mb-2 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <p class="text-sm font-medium">Show Whitelist</p>
+              </button>
+              
+              <button class="quick-action-btn p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition-all" data-command="help">
+                <svg class="w-8 h-8 mx-auto mb-2 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-sm font-medium">Help</p>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settingsTab" class="tab-content hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Basic Settings -->
+            <div class="card">
+              <h2 class="text-xl font-bold mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                </svg>
+                Basic Settings
+              </h2>
+              
+              <div class="space-y-4">
+                <div>
+                  <label class="label">Server Name</label>
+                  <input type="text" id="serverName" class="input" placeholder="My Bedrock Server">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="label">Game Mode</label>
+                    <select id="gamemode" class="select">
+                      <option value="survival">Survival</option>
+                      <option value="creative">Creative</option>
+                      <option value="adventure">Adventure</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label class="label">Difficulty</label>
+                    <select id="difficulty" class="select">
+                      <option value="peaceful">Peaceful</option>
+                      <option value="easy">Easy</option>
+                      <option value="normal">Normal</option>
+                      <option value="hard">Hard</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="label">Max Players</label>
+                    <input type="number" id="maxPlayers" class="input" min="1" max="100" value="10">
+                  </div>
+                  
+                  <div>
+                    <label class="label">Server Port</label>
+                    <input type="number" id="serverPortInput" class="input" min="1" max="65535" value="19132">
+                  </div>
+                </div>
+                
+                <div>
+                  <label class="label">World Name</label>
+                  <input type="text" id="levelName" class="input" placeholder="Bedrock level">
+                </div>
+                
+                <div>
+                  <label class="label">World Seed (Optional)</label>
+                  <input type="text" id="levelSeed" class="input" placeholder="Leave empty for random">
+                </div>
+              </div>
+            </div>
+
+            <!-- Advanced Settings -->
+            <div class="card">
+              <h2 class="text-xl font-bold mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Advanced Settings
+              </h2>
+              
+              <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="label">View Distance</label>
+                    <input type="number" id="viewDistance" class="input" min="5" max="64" value="32">
+                    <p class="text-xs text-gray-400 mt-1">Chunks (5-64)</p>
+                  </div>
+                  
+                  <div>
+                    <label class="label">Tick Distance</label>
+                    <input type="number" id="tickDistance" class="input" min="4" max="12" value="4">
+                    <p class="text-xs text-gray-400 mt-1">Chunks (4-12)</p>
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label class="label">Idle Timeout</label>
+                    <input type="number" id="playerIdleTimeout" class="input" min="0" max="3600" value="30">
+                    <p class="text-xs text-gray-400 mt-1">Minutes (0=disabled)</p>
+                  </div>
+                  
+                  <div>
+                    <label class="label">Max Threads</label>
+                    <input type="number" id="maxThreads" class="input" min="0" max="32" value="8">
+                    <p class="text-xs text-gray-400 mt-1">0=auto</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <label class="label">Player Permission Level</label>
+                  <select id="defaultPlayerPermissionLevel" class="select">
+                    <option value="visitor">Visitor</option>
+                    <option value="member">Member</option>
+                    <option value="operator">Operator</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Toggles -->
+            <div class="card lg:col-span-2">
+              <h2 class="text-xl font-bold mb-4 flex items-center">
+                <svg class="w-6 h-6 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                </svg>
+                Server Features
+              </h2>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
+                  <div class="flex-1">
+                    <p class="font-medium">Enable Whitelist</p>
+                    <p class="text-xs text-gray-400 mt-1">Only allowed players can join</p>
+                  </div>
+                  <label class="toggle-container">
+                    <input type="checkbox" id="enableWhitelist" class="toggle-input">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
+                  <div class="flex-1">
+                    <p class="font-medium">Allow Cheats</p>
+                    <p class="text-xs text-gray-400 mt-1">Enable commands & cheats</p>
+                  </div>
+                  <label class="toggle-container">
+                    <input type="checkbox" id="allowCheats" class="toggle-input">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
+                  <div class="flex-1">
+                    <p class="font-medium">Require Texture Pack</p>
+                    <p class="text-xs text-gray-400 mt-1">Force resource pack download</p>
+                  </div>
+                  <label class="toggle-container">
+                    <input type="checkbox" id="texturepackRequired" class="toggle-input">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
+                  <div class="flex-1">
+                    <p class="font-medium">Content Log</p>
+                    <p class="text-xs text-gray-400 mt-1">Log content errors</p>
+                  </div>
+                  <label class="toggle-container">
+                    <input type="checkbox" id="contentLogFileEnabled" class="toggle-input">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
+                  <div class="flex-1">
+                    <p class="font-medium">Correct Movement</p>
+                    <p class="text-xs text-gray-400 mt-1">Server-side movement correction</p>
+                  </div>
+                  <label class="toggle-container">
+                    <input type="checkbox" id="correctPlayerMovement" class="toggle-input">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                
+                <div class="flex items-center justify-between p-4 bg-gray-700/30 rounded-lg">
+                  <div class="flex-1">
+                    <p class="font-medium">Server Auth Breaking</p>
+                    <p class="text-xs text-gray-400 mt-1">Server validates block breaking</p>
+                  </div>
+                  <label class="toggle-container">
+                    <input type="checkbox" id="serverAuthoritativeBlockBreaking" class="toggle-input">
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="lg:col-span-2">
+              <button id="saveSettingsBtn" class="btn btn-primary w-full text-lg py-3">
+                <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
+                </svg>
+                Save Settings
+              </button>
+              <p class="text-sm text-gray-400 text-center mt-2">
+                Note: Restart the server for changes to take effect
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Console Tab -->
+        <div id="consoleTab" class="tab-content hidden">
+          <div class="card">
+            <h2 class="text-xl font-bold mb-4 flex items-center">
+              <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              Server Console
+            </h2>
+            
+            <div class="space-y-4">
+              <div id="consoleOutput" class="console-log">
+                <div class="text-gray-400 text-sm">
+                  <p>Server console output will appear here...</p>
+                  <p class="mt-2">Start the server to see logs.</p>
+                </div>
+              </div>
+              
+              <div class="flex space-x-2">
+                <input type="text" id="consoleInput" class="input flex-1" placeholder="Enter command... (e.g., list, help, say Hello)" disabled>
+                <button id="sendCommandBtn" class="btn btn-primary" disabled>
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                  </svg>
+                </button>
+              </div>
+              
+              <div class="flex space-x-2">
+                <button id="clearConsoleBtn" class="btn btn-secondary flex-1">
+                  <svg class="w-5 h-5 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                  Clear Console
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 transform translate-y-32 transition-transform duration-300 z-50">
+      <div class="bg-gray-800 border border-gray-700 rounded-lg shadow-2xl p-4 min-w-80">
+        <div class="flex items-start">
+          <div id="toastIcon" class="flex-shrink-0 mr-3">
+            <!-- Icon will be inserted here -->
+          </div>
+          <div class="flex-1">
+            <p id="toastTitle" class="font-semibold"></p>
+            <p id="toastMessage" class="text-sm text-gray-400 mt-1"></p>
+          </div>
+          <button id="toastClose" class="ml-4 text-gray-400 hover:text-gray-100">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>
